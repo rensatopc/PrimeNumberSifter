@@ -75,6 +75,11 @@ class Sifter:
 
         menuFile.add_command(label=translateList["menubar_file_quit"], command=lambda: sys.exit(0))
 
+        menuSifter = tk.Menu(menuBar, tearoff=False)
+        menuBar.add_cascade(label=translateList["menubar_sifter"], menu=menuSifter)
+
+        menuSifter.add_command(label=translateList["menubar_sifter_animate"], command=lambda: self.Sifter_animate())
+
         self.root.configure(menu=menuBar)
     
     def newSifter(self):
@@ -84,6 +89,9 @@ class Sifter:
             self.sifterPanel.destroy()
 
             self.createSifter(self.siftlen)
+
+            self.simulateSifter()
+            print(self.historySifter)
     
     def simulateSifter(self):
         self.historySifter = []
@@ -92,11 +100,15 @@ class Sifter:
             if not self.sifter[p]:
                 continue
         
-        q = p * 2
-        while q <= len(self.sifter):
-            self.sifter[q] = False
-            self.historySifter.append(q)
-            q += p
+            q = p * 2
+            while q <= len(self.sifter):
+                self.sifter[q] = False
+                if not q in self.historySifter:
+                    self.historySifter.append(q)
+                q += p
+    
+    def Sifter_animate(self):
+        pass
 
     def init(self):
         self.createTkinter()
