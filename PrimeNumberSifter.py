@@ -84,6 +84,19 @@ class Sifter:
             self.sifterPanel.destroy()
 
             self.createSifter(self.siftlen)
+    
+    def simulateSifter(self):
+        self.historySifter = []
+
+        for p in range(2, len(self.sifter)):
+            if not self.sifter[p]:
+                continue
+        
+        q = p * 2
+        while q <= len(self.sifter):
+            self.sifter[q] = False
+            self.historySifter.append(q)
+            q += p
 
     def init(self):
         self.createTkinter()
