@@ -39,6 +39,7 @@ class Sifter:
         self.sifterPanel = tk.Frame(self.root)
         self.sifterPanel.pack(expand=True)
 
+        self.sifter = []
         self.sifter = [True] * (siftlen + 1)
         self.sifter[0], self.sifter[1] = False, False
 
@@ -49,8 +50,8 @@ class Sifter:
         sifternum = [i for i in range(siftlen + 1)]
         i = 0
         for r in range(math.ceil(sifterdivide)):
-            for c in range(math.floor(sifterdivide)):
-                itemlist = [None] * 2
+            for c in range(math.ceil(sifterdivide)):
+                itemlist = [None] * 3
                 item = tk.Label(self.sifterPanel, text=i, width=5, height=2, borderwidth=1, relief=tk.SOLID)
                 item.grid(column=c, row=r)
                 if i not in sifternum or i <= 1:
@@ -60,11 +61,15 @@ class Sifter:
                     itemlist[1] = True
                 i += 1
                 itemlist[0] = item
+                itemlist[2] = False
                 self.sifterUI.append(itemlist)
+                print(r, c)
     
     def createTkinter(self):
         self.root = tk.Tk()
         self.root.title(translateList["root_title"])
+
+        self.animated = tk.BooleanVar()
 
         menuBar = tk.Menu(self.root)
 
@@ -78,20 +83,22 @@ class Sifter:
         menuSifter = tk.Menu(menuBar, tearoff=False)
         menuBar.add_cascade(label=translateList["menubar_sifter"], menu=menuSifter)
 
-        menuSifter.add_command(label=translateList["menubar_sifter_animate"], command=lambda: self.Sifter_animate())
+        menuSifter.add_checkbutton(label=translateList["menubar_sifter_animate"], variable=self.animated, command=lambda: self.Sifter_animate())
 
         self.root.configure(menu=menuBar)
     
     def newSifter(self):
-        self.siftlen = simpledialog.askinteger("", translateList["ask_sifterlength"], minvalue=3)
+        self.siftlen = simpledialog.askinteger("", translateList["ask_sifterlength"], minvalue=2)
 
         if self.siftlen != None:
             self.sifterPanel.destroy()
 
+            self.animated.set(False)
+
             self.createSifter(self.siftlen)
 
             self.simulateSifter()
-            print(self.historySifter)
+            self.updateSifterUI()
     
     def simulateSifter(self):
         self.historySifter = []
@@ -101,14 +108,22 @@ class Sifter:
                 continue
         
             q = p * 2
-            while q <= len(self.sifter):
+            while q <= len(self.sifter) - 1:
                 self.sifter[q] = False
                 if not q in self.historySifter:
                     self.historySifter.append(q)
                 q += p
     
     def Sifter_animate(self):
-        pass
+        print(self.animated.get())
+
+    def updateSifterUI(self):
+        index = 0
+        for item in self.sifterUI:
+            if item[1] == True:
+                if not self.sifter[index]:
+                    item[0].configure(fg="white", bg="black")
+            index += 1
 
     def init(self):
         self.createTkinter()
@@ -116,13 +131,16 @@ class Sifter:
         self.NothingLabel = tk.Label(self.root, text=translateList["nothinglabel"])
         self.NothingLabel.pack(expand=True)
 
-        self.siftlen = simpledialog.askinteger("", translateList["ask_sifterlength"], minvalue=3)
+        self.siftlen = simpledialog.askinteger("", translateList["ask_sifterlength"], minvalue=2)
 
         if self.siftlen != None:
             self.NothingLabel.pack_forget()
             self.root.focus_force()
 
             self.createSifter(self.siftlen)
+
+            self.simulateSifter()
+            self.updateSifterUI()
 
             self.root.mainloop()
 
