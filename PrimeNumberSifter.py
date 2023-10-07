@@ -63,13 +63,13 @@ class Sifter:
                 itemlist[0] = item
                 itemlist[2] = False
                 self.sifterUI.append(itemlist)
-                print(r, c)
     
     def createTkinter(self):
         self.root = tk.Tk()
         self.root.title(translateList["root_title"])
 
         self.animated = tk.BooleanVar()
+        self.animateFrame = tk.IntVar()
 
         menuBar = tk.Menu(self.root)
 
@@ -86,6 +86,11 @@ class Sifter:
         menuSifter.add_checkbutton(label=translateList["menubar_sifter_animate"], variable=self.animated, command=lambda: self.Sifter_animate())
 
         self.root.configure(menu=menuBar)
+
+        animate_scale = tk.Scale(self.sifterPanel, from_=0, variable=self.animateFrame, command=lambda: self.animate_scale_changed())
+    
+    def animate_scale_changed(self):
+        pass
     
     def newSifter(self):
         self.siftlen = simpledialog.askinteger("", translateList["ask_sifterlength"], minvalue=2)
